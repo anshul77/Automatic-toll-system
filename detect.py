@@ -154,7 +154,7 @@ def letter_probs_to_code(letter_probs):
     return "".join(common.CHARS[i] for i in numpy.argmax(letter_probs, axis=1))
 
 
-if __name__ == "__main__":
+def detectVehicleNumber(inputImage, ):
     im = cv2.imread(sys.argv[1])
     im_gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY) / 255.
 
@@ -162,30 +162,12 @@ if __name__ == "__main__":
     param_vals = [f[n] for n in sorted(f.files, key=lambda s: int(s[4:]))]
 
     for pt1, pt2, present_prob, letter_probs in post_process(
-                                                  detect(im_gray, param_vals)):
+            detect(im_gray, param_vals)):
         pt1 = tuple(reversed(map(int, pt1)))
         pt2 = tuple(reversed(map(int, pt2)))
 
         code = letter_probs_to_code(letter_probs)
         print (code)
-        color = (0.0, 255.0, 0.0)
-        cv2.rectangle(im, pt1, pt2, color)
+        return code
 
-        cv2.putText(im,
-                    code,
-                    pt1,
-                    cv2.FONT_HERSHEY_PLAIN, 
-                    1.5,
-                    (0, 0, 0),
-                    thickness=5)
-
-        cv2.putText(im,
-                    code,
-                    pt1,
-                    cv2.FONT_HERSHEY_PLAIN, 
-                    1.5,
-                    (255, 255, 255),
-                    thickness=2)
-
-    cv2.imwrite(sys.argv[3], im)
 
