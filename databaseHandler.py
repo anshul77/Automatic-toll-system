@@ -47,7 +47,7 @@ def getVehicleDetails(vehicleNumber):
 def updatebalance(vehicleNumber,balance):
     try:
         createConnection()
-        sqlQuery = "update Vehicles set balance = "+ balance+" where vehicleNumber= '" + vehicleNumber + "'"
+        sqlQuery = "update Vehicles set balance = " + str(balance) + " where vehicleNumber = '" + vehicleNumber + "'"
         dbhandler = connection.cursor()
         print sqlQuery
         dbhandler.execute(sqlQuery)
