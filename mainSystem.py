@@ -13,6 +13,8 @@ panelB = None
 #Let assume the sceneio where only a fixed amount of the tax would be paid
 #otherwise for the real scenerio it has to be decided more efficiently
 taxFare = 100
+minimumBalanceRequired = 100
+
 
 root = tk.Tk()
 root.title("Toll Checker ")
@@ -91,37 +93,47 @@ def clear():
     panelA = None
     clearDetails()
 
+
+# check the balance in the account
+#       @params     vehicleNumber - vehicle number
+#                   balance - balance available after the deduction
+
+def checkBalance(vehicleNumber, balance):
+    global minimumBalanceRequired;
+    if(balance <= minimumBalanceRequired):
+        resultVehicleBalance.config(text = "Failed ! Not enough balanace", fg = "red")
+    else:
+        balance = balance - taxFare
+        databaseHandler.updatebalance(vehicleNumber, balance)
+        resultVehicleBalance.config(text = "Successful ! Tax paid", fg = "green")
+
 def processing():
     global panelA, panelB, filepath
     # here to execute the getVehicleNumber.detectVehicleNumber
     vehicleNumber = getVehicleNumber.detectVehicleNumber(filepath )
-    print vehicleNumber
+    #print vehicleNumber
 
     vehicleDetails = databaseHandler.getVehicleDetails(vehicleNumber)
-    print vehicleDetails[0][0]
+    #print vehicleDetails[0][0]
     # Initialising the vehicle details according to the result fetched by database handler
-
     # vehicleType = vehicleDetails[1]
-    balance = int(vehicleDetails[0][2])-taxFare
+
+    balance = int(vehicleDetails[0][2])
+    checkBalance(vehicleNumber, balance)
+
     vehicleAlertstatus = vehicleDetails[0][3]
     vehicleOwnerName = vehicleDetails[0][4]
     vehicleOwnerMobile = vehicleDetails[0][5]
     vehicleOwnerAddress = vehicleDetails[0][6]
-    databaseHandler.updatebalance(vehicleNumber,balance)
+
     # Setting the vehicle details to the interface
     resultVehicleNumber.config(text = "Vehicle Number = " + vehicleNumber)
     resultVehicleBalance.config(text = "Vehicle balance = " + str(balance))
     resultVehicleOwnerName.config(text="Onwer Name = " + vehicleOwnerName)
     resultVehicleOwnerMobile.config(text="Onwer Mobile = " + vehicleOwnerMobile)
     resultVehicleOwnerAddress.config(text="Owner Address = " + vehicleOwnerAddress)
-
     if (vehicleAlertstatus == True):
         resultVehicleAlert.config(text = "Alert !! The Vehicle is under police search")
-
-
-
-
-
 
 
 frame_2 = tk.LabelFrame(root, fg="black", text="Functionality..", borderwidth=1, width=600, height=60)
